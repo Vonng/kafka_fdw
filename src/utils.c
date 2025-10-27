@@ -90,7 +90,9 @@ kafka_get_watermarks(PG_FUNCTION_ARGS)
             tuplestore_putvalues(tupstore, tupdesc, values, nulls);
         }
 
+#if PG_VERSION_NUM < 170000
         tuplestore_donestoring(tupstore);
+#endif
     }
     PG_CATCH();
     {

@@ -13,6 +13,12 @@ OBJS         =  $(patsubst %.c,%.o,$(wildcard src/*.c))
 PG_CONFIG   ?= pg_config
 PG_CPPFLAGS  = -std=c99 -Wall -Wextra -Wno-unused-parameter
 
+PLATFORM 	 = $(shell uname -s)
+
+ifeq ($(PLATFORM),Darwin)
+PG_CPPFLAGS += -I/opt/homebrew/include
+endif
+
 ifndef NOINIT
 REGRESS_PREP = prep_kafka
 endif
@@ -28,11 +34,8 @@ ifeq ($(shell test $(VERSION_NUM) -lt 100000; echo $$?),0)
 REGRESS := $(filter-out parallel, $(REGRESS))
 endif
 
-
-PLATFORM 	 = $(shell uname -s)
-
 ifeq ($(PLATFORM),Darwin)
-SHLIB_LINK += -lrdkafka -lz -lpthread
+SHLIB_LINK += -lrdkafka -lz -lpthread -L/opt/homebrew/lib
 PG_LIBS += -lrdkafka -lz -lpthread
 else
 SHLIB_LINK += -lrdkafka -lz -lpthread -lrt
